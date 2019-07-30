@@ -1,0 +1,142 @@
+Header
+  Mesh DB "." "PitzDaily"
+  Include Path ""
+  Results Directory ""
+End
+
+Simulation
+  Max Output Level = 5
+  Coordinate System =  Cartesian 2D
+  Coordinate Mapping(3) = 1 2 3
+
+  Simulation Type = Steady
+  Steady State Max Iterations = 20
+
+  Output Intervals = 1
+  Post File = "Step.vtu"
+
+End
+
+Body 1
+  Name = "Body1"
+  Equation = 1
+  Material = 1
+  Target Bodies = 4
+  Initial Condition = 1
+End
+
+Equation 1
+  Name = "Equation1"
+  Navier-Stokes = True
+  Active Solvers(2) = 1 2
+
+End
+
+Solver 1
+   Equation = "Navier-Stokes"
+
+   Linear System Solver = Iterative
+   Linear System Iterative Method = BiCGStab
+   Linear System Max Iterations = 2000
+
+   Stabilization Method = String Stabilized
+
+   Linear System Convergence Tolerance = 1.0e-8
+   Linear System Preconditioning = ILU0
+   Linear System Residual Output = 1
+   Steady State Convergence Tolerance = 1.0e-7
+
+   Nonlinear System Convergence Tolerance = 1.0e-6
+   Nonlinear System Max Iterations = 1
+   Nonlinear System Newton After Iterations = 3
+   Nonlinear System Newton After Tolerance = 1.0e-6
+   Nonlinear System Relaxation Factor = 0.9
+End
+
+Solver 2
+  Equation = Kepsilon
+
+  Procedure = "KESolver" "KESolver"
+ 
+  Stabilization Method = String Bubbles
+  Nonlinear System Max Iterations = 1
+  Nonlinear System Convergence Tolerance = 1.0e-5
+  Nonlinear System Newton After Iterations = 20
+  Nonlinear System Newton After Tolerance = 1.0e-3
+  Nonlinear System Relaxation Factor = 0.75
+
+  Linear System Solver = Iterative
+  Linear System Max Iterations = 1000
+  Linear System Iterative Method = BiCGStab
+  Linear System Preconditioning = ILU3
+  Linear System Convergence Tolerance = 1.0e-7
+
+  Steady State Convergence Tolerance = 1.0e-5
+End
+
+
+Material 1
+  Name = "Material1"
+  Density = 1
+  Viscosity = 1.0e-5
+
+  KE SigmaK = 1.00
+  KE SigmaE = 1.30
+  KE C1     = 1.44
+  KE C2     = 1.92
+  KE Cmu    = 0.09
+  KE Clip   = Real 1.0e-6
+
+  Viscosity Model = ke
+
+End
+
+Initial Condition 1
+  Velocity 1 = 0
+  Velocity 2 = 0
+
+  Kinetic Energy = 0.375
+  Kinetic Dissipation = 14.855
+
+End
+
+
+
+
+!------ Skeleton for boundary section -----
+Boundary Condition 1
+
+  Name = inlet
+  Target Boundaries = 1
+
+  Velocity 1 = 10
+  Velocity 2 = 0
+  Kinetic Energy = Real 0.375
+  Kinetic Dissipation = Real 14.855
+
+End
+
+Boundary Condition 2
+
+  Name = outlet
+  Target Boundaries = 2
+
+  Pressure = 0
+
+End
+
+Boundary Condition 3
+
+  Name = walls
+  Target Boundaries = 3
+
+  Noslip wall BC = True
+  Wall Law = True
+  Boundary Layer Thickness =  1.0e-6
+
+End
+
+Solver 1 :: Reference Norm = Real 0.001
+Solver 2 :: Reference Norm = Real 0.001
+RUN
+
